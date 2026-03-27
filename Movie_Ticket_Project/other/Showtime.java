@@ -27,4 +27,13 @@ public class Showtime {
     public Movie getMovie() {
         return movie;
     }
+       @Override
+    public String toString() {
+        return "Showtime{" +
+                "Time='" + time + '\'' +
+                ", Date='" + date + '\'' +
+                ", Hall=" + hallNumber +
+                ", Movie=" + movie.getTitle() +
+                '}';
+    }
 }

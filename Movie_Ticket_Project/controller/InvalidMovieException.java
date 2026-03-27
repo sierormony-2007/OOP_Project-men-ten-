@@ -3,10 +3,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
+package controller;
+
 /**
  *
  * @author USER
  */
-public class Exeption {
-
+// Custom exception for invalid movie data
+class InvalidMovieException extends Exception {
+    public InvalidMovieException(String message) {
+        super(message);
+    }
 }

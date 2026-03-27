@@ -1,4 +1,7 @@
 package controller;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import other.Customer;
 import other.Movie;
@@ -10,32 +13,29 @@ import user.Manager;
 import user.OperatorStaff;
 import user.Staff;
 
-
 public class Cinema {
 
     // =========================
     // ACTION CONSTANTS
     // =========================
 
-    //Movie actions
-
-    
+    // Movie actions
 
     public static final String CREATE_MOVIE = "CREATE_MOVIE";
     public static final String UPDATE_MOVIE = "UPDATE_MOVIE";
     public static final String DELETE_MOVIE = "DELETE_MOVIE";
-    public static final String CHECK_MOVIES = "CHECK_MOVIES";
+    public static final String PRINT_MOVIES = "CHECK_MOVIES";
     public static final String DISPLAY_MOVIE = "DISPLAY_MOVIE";
     public static final String CREATE_CUSTOMER = "CREATE_CUSTOMER";
-    //Ticket actons
+    // Ticket actons
     public static final String SELL_TICKET = "SELL_TICKET";
     public static final String CHECK_TICKET = "CHECK_TICKET";
     public static final String CANCEL_TICKET = "CANCEL_TICKET";
     public static final String HANDLE_TICKET_ISSUE = "HANDLE_TICKET_ISSUE";
-    //System
+    // System
     public static final String HANDLE_SYSTEM = "HANDLE_SYSTEM";
-    
-    //manager
+
+    // manager
     public static final String CREATE_STAFF = "CREATE_STAFF";
     public static final String MANAGE_STAFF = "MANAGE_STAFF";
 
@@ -43,7 +43,6 @@ public class Cinema {
 
     private String cinemaName;
     private String address;
-    
 
     // DATA STORAGE (ArrayLists)
 
@@ -60,6 +59,7 @@ public class Cinema {
     // FEEDBACK MESSAGE
 
     private String lastMessage = "";
+
     // CONSTRUCTOR
     // =========================
     public Cinema(String cinemaName, String address) {
@@ -68,6 +68,7 @@ public class Cinema {
 
         lastMessage = "Cinema created. Default admin: admin / 1234";
     }
+
     @Override
     public String toString() {
         return "Cinema [cinemaName=" + cinemaName + ", address=" + address + ", staffs=" + staffs + ", customers="
@@ -76,133 +77,161 @@ public class Cinema {
     }
     // getters / setters
 
-    public String getCinemaName() {return cinemaName;}
+    public String getCinemaName() {
+        return cinemaName;
+    }
 
     public void setCinemaName(String cinemaName) {
-        if(isBlank(cinemaName)) this.cinemaName = "cinema";
-        else this.cinemaName = cinemaName.trim();
+        if (isBlank(cinemaName))
+            this.cinemaName = "cinema";
+        else
+            this.cinemaName = cinemaName.trim();
     }
 
-    public String getAddress() {return address;}
+    public String getAddress() {
+        return address;
+    }
 
     public void setAddress(String address) {
-        if(isBlank(address)) this.address = "UNKNOWN";
-        this.address = address.trim();
+        if (isBlank(address)) {
+            this.address = "UNKNOWN";
+        } else {
+            this.address = address.trim();
+        }
     }
-    public boolean isStafffLoggedIn(){return loggedInStaff != null;}
 
-    public IStaff getLoggedInStaff() {return  loggedInStaff;}
+    public boolean isStafffLoggedIn() {
+        return loggedInStaff != null;
+    }
 
-    public void setLastMessage(String lmsg) {lastMessage = lmsg;}
+    public IStaff getLoggedInStaff() {
+        return loggedInStaff;
+    }
+
+    public void setLastMessage(String lmsg) {
+        lastMessage = lmsg;
+    }
 
     public String getLastMessage() {
         return lastMessage;
     }
-    
+
     // Test code
 
-public void seedStaff() {
-    
-    Staff m1 = new Manager("m00", "manager_01", "SIE RORMONY" , "sierormony_18102007", "nii18102007@gmail.com", "0886477296", 5000.0, "70");
-    // Manager manager = new Manager(managerStaff, "70");
-    staffs.add(m1);
+    public void seedStaff() {
 
-    Staff CS1 = new CashierStaff("CS01", "cashier", "Cashier User","cashier_1234" ,"cashier@cinema.com", "111111", 150.0, "morning");
-    // CashierStaff cashier = new CashierStaff(CS, "morning");
-    staffs.add(CS1);
+        Staff m1 = new Manager("m00", "manager", "SIE RORMONY", "1234", "nii18102007@gmail.com",
+                "0886477296", 5000.0, "70");
+        // Manager manager = new Manager(managerStaff, "70");
+        staffs.add(m1);
 
-    Staff OS = new OperatorStaff("OS01", "operator", "Jasmin","operator_1234", "jasmin01@gmail.com", "099875630",400, "Sound");
-    // OperatorStaff operatorstaff = new OperatorStaff(OS, "Sound");
-    staffs.add(OS);
+        Staff CS1 = new CashierStaff("CS01", "cashier", "Sarong Kimsorng", "1234", "cashier@cinema.com", "111111",
+                500.0, "morning");
+        // CashierStaff cashier = new CashierStaff(CS, "morning");
+        staffs.add(CS1);
 
+        Staff OS = new OperatorStaff("OS01", "operator", "Chhai Rady", "1234", "jasmin01@gmail.com", "099875630",
+                400, "Sound");
+        // OperatorStaff operatorstaff = new OperatorStaff(OS, "Sound");
+        staffs.add(OS);
 
-    Staff s1 = new Staff("m00", "manager_01", "SIE RORMONY" , "sierormony_18102007", "nii18102007@gmail.com", "0886477296", 5000.0) {
-        @Override
-        public boolean can(String action) {
-            return true;
-        }
+        Staff s1 = new Staff("m00", "manager_01", "SIE RORMONY", "sierormony_18102007", "nii18102007@gmail.com",
+                "0886477296", 5000.0) {
+            @Override
+            public boolean can(String action) {
+                return true;
+            }
 
-        @Override
-        public String toString() {
-            return super.toString()+"this one is manager";
-        }
-        
-    };
-}
+            @Override
+            public String toString() {
+                return super.toString() + "this one is manager";
+            }
 
-//Anonymous_class
-// public void showActiveStaffsAnonymous() {
-
-//     Staff.StaffFilter activeFilter = new Staff.StaffFilter() {
-//         public boolean filter(Staff staff) {
-//             return staff.isActive();
-//         }
-//     };
-
-//     for (Staff s : staffs) {
-//         if (activeFilter.filter(s)) {
-//             System.out.println(s);
-//         }
-//     }
-// }
-//lamda expression
-public void showActiveStaffs() {
-    Staff.StaffFilter activeFilter = (staff) -> staff.isActive();
-
-    for (Staff s : staffs) {
-        if (activeFilter.filter(s)) {
-            System.out.println(s);
-        }
+        };
     }
-}
 
+    // Anonymous_class
+    // public void showActiveStaffsAnonymous() {
 
-public void demoPolymorphism(){
-
-    // String[] actions = {
-    //     CREATE_MOVIE;
-    //     CREATE_CUSTOMER;
-    //     SELL_TICKET;
-    //     DELETE_MOVIE;
-    //     CANCEL_TICKET;
-    //     CHECK_TICKET;
-    //     UPDATE_MOVIE;
-    //     CHECK_MOVIES;
-    //     DISPLAY_MOVIE;
-    //     HANDLE_SYSTEM;
-    //     HANDLE_TICKET_ISSUE;
-    //     CREATE_STAFF;
-    //     MANAGE_STAFF;
+    // Staff.StaffFilter activeFilter = new Staff.StaffFilter() {
+    // public boolean filter(Staff staff) {
+    // return staff.isActive();
+    // }
     // };
-    
 
-    for(IStaff staff : staffs){
-        
-        // for(String action : actions){
+    // for (Staff s : staffs) {
+    // if (activeFilter.filter(s)) {
+    // System.out.println(s);
+    // }
+    // }
+    // }
+    // lamda expression
+    public void showActiveStaffs() {
+        Staff.StaffFilter activeFilter = (staff) -> staff.isActive();
 
-        //     System.out.println(
-        //         action + " -> " + staff.can(action)
-        //     );
-
-        // }
-
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  CREATE_MOVIE  -->  " + staff.can(CREATE_MOVIE)) ;
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  CREATE_CUSTOMER  -->  " + staff.can(CREATE_CUSTOMER)) ;
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  SELL_TICKET  -->  " + staff.can(SELL_TICKET)) ;
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  DELETE_MOVIE  -->  " + staff.can(DELETE_MOVIE)) ;
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  CANCEL_TICKET  -->  " + staff.can(CANCEL_TICKET)) ;
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  CHECK_TICKET  -->  " + staff.can(CHECK_TICKET)) ;
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  UPDATE_MOVIE  -->  " + staff.can(UPDATE_MOVIE)) ;
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  CHECK_MOVIE  -->  " + staff.can(CHECK_MOVIES)) ;
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  DISPLAY_MOVIE  -->  " + staff.can(DISPLAY_MOVIE)) ;
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  HANDLE_SYSTEM  -->  " + staff.can(HANDLE_SYSTEM)) ;
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  HANDLE_TICKET_ISSUE  -->  " + staff.can(HANDLE_TICKET_ISSUE)) ;
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  CREATAE_STAFF  -->  " + staff.can(CREATE_STAFF)) ;
-        System.out.println("\nStaff: " + staff.getUsername() + " -->  MANAGE_STAFF  -->  " + staff.can(MANAGE_STAFF)) ;
-
+        for (Staff s : staffs) {
+            if (activeFilter.filter(s)) {
+                System.out.println(s);
+            }
+        }
     }
-}
 
+    public void demoPolymorphism() {
+
+        // String[] actions = {
+        // CREATE_MOVIE;
+        // CREATE_CUSTOMER;
+        // SELL_TICKET;
+        // DELETE_MOVIE;
+        // CANCEL_TICKET;
+        // CHECK_TICKET;
+        // UPDATE_MOVIE;
+        // CHECK_MOVIES;
+        // DISPLAY_MOVIE;
+        // HANDLE_SYSTEM;
+        // HANDLE_TICKET_ISSUE;
+        // CREATE_STAFF;
+        // MANAGE_STAFF;
+        // };
+
+        for (IStaff staff : staffs) {
+
+            // for(String action : actions){
+
+            // System.out.println(
+            // action + " -> " + staff.can(action)
+            // );
+
+            // }
+
+            System.out
+                    .println("\nStaff: " + staff.getUsername() + " -->  CREATE_MOVIE  -->  " + staff.can(CREATE_MOVIE));
+            System.out.println(
+                    "\nStaff: " + staff.getUsername() + " -->  CREATE_CUSTOMER  -->  " + staff.can(CREATE_CUSTOMER));
+            System.out.println("\nStaff: " + staff.getUsername() + " -->  SELL_TICKET  -->  " + staff.can(SELL_TICKET));
+            System.out
+                    .println("\nStaff: " + staff.getUsername() + " -->  DELETE_MOVIE  -->  " + staff.can(DELETE_MOVIE));
+            System.out.println(
+                    "\nStaff: " + staff.getUsername() + " -->  CANCEL_TICKET  -->  " + staff.can(CANCEL_TICKET));
+            System.out
+                    .println("\nStaff: " + staff.getUsername() + " -->  CHECK_TICKET  -->  " + staff.can(CHECK_TICKET));
+            System.out
+                    .println("\nStaff: " + staff.getUsername() + " -->  UPDATE_MOVIE  -->  " + staff.can(UPDATE_MOVIE));
+            System.out
+                    .println("\nStaff: " + staff.getUsername() + " -->  CHECK_MOVIE  -->  " + staff.can(PRINT_MOVIES));
+            System.out.println(
+                    "\nStaff: " + staff.getUsername() + " -->  DISPLAY_MOVIE  -->  " + staff.can(DISPLAY_MOVIE));
+            System.out.println(
+                    "\nStaff: " + staff.getUsername() + " -->  HANDLE_SYSTEM  -->  " + staff.can(HANDLE_SYSTEM));
+            System.out.println("\nStaff: " + staff.getUsername() + " -->  HANDLE_TICKET_ISSUE  -->  "
+                    + staff.can(HANDLE_TICKET_ISSUE));
+            System.out.println(
+                    "\nStaff: " + staff.getUsername() + " -->  CREATAE_STAFF  -->  " + staff.can(CREATE_STAFF));
+            System.out
+                    .println("\nStaff: " + staff.getUsername() + " -->  MANAGE_STAFF  -->  " + staff.can(MANAGE_STAFF));
+
+        }
+    }
 
     // =========================
     // LOGIN
@@ -214,22 +243,23 @@ public void demoPolymorphism(){
         }
         return true;
     }
+
     public void staffLogin(String username, String password) {
 
         if (isBlank(username) || isBlank(password)) {
             lastMessage = "Login failed: missing username or password.";
             return;
         }
-        for(int i = 0; i<staffs.size(); i++){
+        for (int i = 0; i < staffs.size(); i++) {
             Staff s = staffs.get(i);
-            if (s.getUsername().equalsIgnoreCase(username.trim())){
-                if(!s.checkPassword(password)){
+            if (s.getUsername().equalsIgnoreCase(username.trim())) {
+                if (!s.checkPassword(password)) {
                     setLastMessage("Login failed: password is wrong");
                     return;
                 }
 
                 loggedInStaff = s;
-                setLastMessage("Login successful. Welcome " + s.getUsername()); 
+                setLastMessage("Login successful. Welcome " + s.getUsername());
                 return;
             }
         }
@@ -242,23 +272,47 @@ public void demoPolymorphism(){
         setLastMessage("Logged out successfully.");
     }
 
-    //create staff
+    // create staff
 
-    public void createStaff (String staffId, String userName, String fullName, String password,String email, String phone, String position){
-        if(!requireLogin() || !requirePermission(CREATE_STAFF)) return;
-        if (isBlank(staffId) || isBlank(userName)){
-            setLastMessage("Cannot crreate staff: ID or UserName is empty");
+    public void createStaff(String staffId, String userName, String fullName, String password, String email,
+            String phone, String position) {
+
+        if (!requireLogin() || !requirePermission(CREATE_STAFF))
+            return;
+
+        if (isBlank(staffId) || isBlank(userName)) {
+            setLastMessage("Cannot create staff: ID or UserName is empty");
             return;
         }
+
+        Staff staff;
+
+        if (position.equalsIgnoreCase("manager")) {
+            staff = new Manager(staffId, userName, fullName, password, email, phone, 5000.0, "management");
+        } else if (position.equalsIgnoreCase("cashier")) {
+            staff = new CashierStaff(staffId, userName, fullName, password, email, phone, 150.0, "morning");
+        } else if (position.equalsIgnoreCase("operator")) {
+            staff = new OperatorStaff(staffId, userName, fullName, password, email, phone, 400.0, "Sound");
+        } else {
+            setLastMessage("Invalid position.");
+            return;
+        }
+
+        // Add staff to the correct list
+        staffs.add(staff);
+
+        setLastMessage("Staff created successfully.");
     }
-    public void manageStaff(){
-        if(!requireLogin() || !requirePermission(MANAGE_STAFF)) return;
-        if(staffs.isEmpty()){
+
+    public void manageStaff() {
+        if (!requireLogin() || !requirePermission(MANAGE_STAFF))
+            return;
+        if (staffs.isEmpty()) {
             setLastMessage("No staff abailable.");
             return;
         }
         System.out.println("--- Staff List ---");
-        for(Staff s : staffs){
+        for (Staff s : staffs) {
             System.out.println(s);
         }
         setLastMessage("Staff displayed successfully.");
@@ -266,50 +320,86 @@ public void demoPolymorphism(){
 
     // CREATE MOVIE
 
-    public void createMovie(String movieId, String title, int duration,String releaseDate, String genre) {
+    // =========================
+    // CREATE MOVIE
+    // =========================
+    public void createMovie(String movieId, String title, int duration, String releaseDate, String genre) {
 
-        if (!requireLogin()) return;
+        if (!requireLogin())
+            return;
 
-        if (isBlank(movieId)) {
-    lastMessage = "Movie ID cannot be empty.";
-    return;
+        try {
+            // Check Movie ID
+            if (isBlank(movieId))
+                throw new InvalidMovieException("Movie ID cannot be empty.");
+
+            int id;
+            try {
+                id = Integer.parseInt(movieId.trim());
+            } catch (NumberFormatException e) {
+                throw new InvalidMovieException("Movie ID must be a number.");
+            }
+
+            if (findMovieById(movieId) != null) {
+                throw new InvalidMovieException("Movie ID already exists.");
+            }
+
+            // Validate title
+            if (isBlank(title))
+                throw new InvalidMovieException("Movie title cannot be empty.");
+
+            // Validate genre
+            if (isBlank(genre))
+                throw new InvalidMovieException("Movie genre cannot be empty.");
+
+            // Validate release date format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate date;
+            try {
+                date = LocalDate.parse(releaseDate, formatter);
+                if (date.isBefore(LocalDate.now())) {
+                    throw new InvalidMovieException("Release date cannot be in the past!");
+                }
+            } catch (Exception e) {
+                throw new InvalidMovieException("Invalid release date! Use yyyy-MM-dd format.");
+            }
+
+            // Everything valid → create movie
+            Movie tempMovie = new Movie(id, title, (double) duration, releaseDate, genre);
+            movies.add(tempMovie);
+            lastMessage = "Movie created successfully.";
+
+        } catch (InvalidMovieException e) {
+            // Catch custom exception and set last message
+            lastMessage = e.getMessage();
+        } catch (Exception e) {
+            // Catch-all for any unexpected exception
+            lastMessage = "An unexpected error occurred: " + e.getMessage();
+            e.printStackTrace();
+        }
     }
 
-        movieId = movieId.trim();
+    // CHECK MOVIE
+    public void checkMovies() {
+        if (!requireLogin())
+            return;
 
-        if (findMovieById(movieId) != null) {
-            lastMessage = "Movie ID already exists.";
+        if (movies.isEmpty()) {
+            lastMessage = "No movies available.";
             return;
         }
-        
 
-        movies.add(new Movie(Integer.parseInt(movieId), title, (double) duration, releaseDate, genre));
-        lastMessage = "Movie created successfully.";
+        for (Movie m : movies) {
+            System.out.println(m);
         }
-    //CHECK MOVIE
-    public void checkMovies(){
-    if(!requireLogin()) return;
-
-    if(movies.isEmpty()){
-        lastMessage = "No movies available.";
-        return;
     }
-
-    for(Movie m : movies){
-        System.out.println(m);
-    }
-
-    lastMessage = "Movies displayed successfully.";
-    }
-
-
-
 
     // UPDATE MOVIE
 
     public void updateMovie(String movieId, String newTitle) {
 
-        if (!requireLogin()) return;
+        if (!requireLogin())
+            return;
 
         Movie movie = findMovieById(movieId);
 
@@ -325,12 +415,12 @@ public void demoPolymorphism(){
         lastMessage = "Movie updated successfully.";
     }
 
-
     // DELETE MOVIE
 
     public void deleteMovie(String movieId) {
 
-        if (!requireLogin()) return;
+        if (!requireLogin())
+            return;
 
         Movie movie = findMovieById(movieId);
 
@@ -342,68 +432,85 @@ public void demoPolymorphism(){
         movies.remove(movie);
         lastMessage = "Movie deleted successfully.";
     }
-   //DISPLAY MOVIE
-   public void displayMovie(String movieId){
 
-    if(!requireLogin()) return;
-
-    Movie movie = findMovieById(movieId);
-
-    if(movie == null){
-        lastMessage = "Movie not found.";
-        return;
+    // DISPLAY MOVIE
+    public void displayMovie(String movieId) {
+        try {
+            int id = Integer.parseInt(movieId);
+            for (Movie m : movies) {
+                if (m.getMovieId() == id) {
+                    System.out.println(m);
+                    lastMessage = "Movie displayed successfully.";
+                    return;
+                }
+            }
+            lastMessage = "Movie not found.";
+        } catch (NumberFormatException e) {
+            lastMessage = "Invalid Movie ID";
+        }
     }
-
-    System.out.println(movie);
-    lastMessage = "Movie displayed successfully.";
-}
 
     // SELL TICKET
 
     public void sellTicket(String ticketId, String movieId, String customerName) {
 
-    if (!requireLogin()) return;
+        if (!requireLogin())
+            return;
 
-    Movie movie = findMovieById(movieId);
+        try {
+            int id = Integer.parseInt(ticketId);
 
-    if (movie == null) {
-        lastMessage = "Cannot sell ticket. Movie not found.";
-        return;
+            Showtime showtime = findShowtimeByMovieId(movieId);
+
+            if (showtime == null) {
+                lastMessage = "No showtime available.";
+                return;
+            }
+
+            Customer customer = new Customer(customerName, "", false);
+
+            Ticket t = new Ticket(id, showtime, customer, 100.0, "Standard");
+
+            tickets.add(t);
+            lastMessage = "Ticket sold successfully.";
+
+        } catch (NumberFormatException e) {
+            lastMessage = "Invalid ticket ID (must be number)";
+        }
     }
 
-    int id = Integer.parseInt(ticketId);
-    Customer customer = new Customer(customerName, "", false);
-    double price = 100.0;
-    String ticketType = "Standard";
-
-    Ticket t = new Ticket (id, movie, customer, price, ticketType);
-    tickets.add(t);
-
-    lastMessage = "Ticket sold successfully.";
-}
     // CREATE CUSTOMER
-    public void createCustomer(String name, String email){
+    public void createCustomer(String name, String email) {
 
-    if(!requireLogin()) return;
+        if (!requireLogin())
+            return;
 
-    if(isBlank(name)){
-        lastMessage = "Customer name cannot be empty.";
-        return;
+        if (isBlank(name)) {
+            lastMessage = "Customer name cannot be empty.";
+            return;
+        }
+
+        Customer c = new Customer(name, email, false);
+        customers.add(c);
+
+        lastMessage = "Customer created successfully.";
     }
-
-    Customer c = new Customer(name, email, false);
-    customers.add(c);
-
-    lastMessage = "Customer created successfully.";
-}
 
     // PRINT METHODS
 
     public void printMovies() {
         System.out.println("\n--- Movies (" + movies.size() + ") ---");
+
+        if (movies.isEmpty()) {
+            lastMessage = "No movies available.";
+            return;
+        }
+
         for (Movie m : movies) {
             System.out.println(m);
         }
+
+        lastMessage = "Movies displayed successfully.";
     }
 
     public void printTickets() {
@@ -412,95 +519,110 @@ public void demoPolymorphism(){
             System.out.println(t);
         }
     }
-//CHECK TICKET
-   public void checkTicket(){
 
-    if(!requireLogin()) return;
+    // CHECK TICKET
+    public void checkTicket() {
 
-    if(tickets.isEmpty()){
-        lastMessage = "No tickets found.";
-        return;
-    }
-
-    for(Ticket t : tickets){
-        System.out.println(t);
-    }
-
-    lastMessage = "Tickets displayed successfully.";
-}
-// CANCEL TICKET
-    public void cancelTicket(String ticketId){
-
-    if(!requireLogin()) return;
-
-    int id = Integer.parseInt(ticketId);
-
-    for(Ticket t : tickets){
-        if(t.getTicketId() == id){
-            tickets.remove(t);
-            lastMessage = "Ticket cancelled successfully.";
+        if (!requireLogin())
             return;
+
+        if (tickets.isEmpty()) {
+            lastMessage = "No tickets found.";
+
+        } else {
+            for (Ticket t : tickets) {
+                System.out.println(t);
+            }
+
+            lastMessage = "Tickets displayed successfully.";
         }
     }
 
-    lastMessage = "Ticket not found.";
-}
-//HANDLE TICKET ISSUE
-    public void handleTicketIssue(String ticketId, String issue){
+    // CANCEL TICKET
+    public void cancelTicket(String ticketId) {
 
-    if(!requireLogin()) return;
-
-    int id = Integer.parseInt(ticketId);
-
-    for(Ticket t : tickets){
-        if(t.getTicketId() == id){
-            t.setIssue(issue);
-            lastMessage = "Ticket issue updated.";
+        if (!requireLogin())
             return;
+
+        try {
+            int id = Integer.parseInt(ticketId);
+
+            for (int i = 0; i < tickets.size(); i++) {
+                if (tickets.get(i).getTicketId() == id) {
+                    tickets.remove(i);
+                    lastMessage = "Ticket cancelled successfully.";
+                    return;
+                }
+            }
+
+            lastMessage = "Ticket not found.";
+
+        } catch (NumberFormatException e) {
+            lastMessage = "Invalid ticket ID";
         }
     }
 
-    lastMessage = "Ticket not found.";
-}
-//CREATE SHOWTIME
-public void createShowtime(String time, String date, int hall, String movieId){
+    // HANDLE TICKET ISSUE
+    public void handleTicketIssue(String ticketId, String issue) {
 
-    if(!requireLogin()) return;
+        if (!requireLogin())
+            return;
 
-    Movie movie = findMovieById(movieId);
+        int id = Integer.parseInt(ticketId);
 
-    if(movie == null){
-        lastMessage = "Movie not found.";
-        return;
+        for (Ticket t : tickets) {
+            if (t.getTicketId() == id) {
+                t.setIssue(issue);
+                lastMessage = "Ticket issue updated.";
+                return;
+            }
+        }
+
+        lastMessage = "Ticket not found.";
     }
 
-    Showtime st = new Showtime(time, date, hall, movie);
-    showtimes.add(st);
+    // CREATE SHOWTIME
+    public void createShowtime(String time, String date, int hall, String movieId) {
 
-    lastMessage = "Showtime created successfully.";
-}
+        if (!requireLogin())
+            return;
 
-//CHECK SHOWTIME
-public void checkShowtime(){
+        Movie movie = findMovieById(movieId);
 
-    if(!requireLogin()) return;
+        if (movie == null) {
+            lastMessage = "Movie not found.";
+            return;
+        }
 
-    if(showtimes.isEmpty()){
-        lastMessage = "No showtimes available.";
-        return;
+        Showtime st = new Showtime(time, date, hall, movie);
+        showtimes.add(st);
+
+        lastMessage = "Showtime created successfully.";
     }
 
-    for(Showtime s : showtimes){
-        System.out.println(s);
-    }
+    // CHECK SHOWTIME
+    public void checkShowtime() {
 
-    lastMessage = "Showtimes displayed.";
-}
+        if (!requireLogin())
+            return;
+
+        if (showtimes.isEmpty()) {
+            lastMessage = "No showtimes available.";
+            return;
+        }
+
+        for (Showtime s : showtimes) {
+            System.out.println(s);
+        }
+
+        lastMessage = "Showtimes displayed.";
+    }
     // HELPER
 
     private Movie findMovieById(String movieId) {
 
-        if (isBlank(movieId)) return null;
+        if (isBlank(movieId))
+            return null;
 
         for (Movie m : movies) {
             if (m.getMovieId() == Integer.parseInt(movieId.trim())) {
@@ -510,12 +632,21 @@ public void checkShowtime(){
 
         return null;
     }
+    private Showtime findShowtimeByMovieId(String movieId) {  
+    for (Showtime s : showtimes) {  
+        if (s.getMovie().getMovieId().equals(movieId)) {  
+            return s;  
+        }  
+    }  
+    return null;  
+}
 
     private boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
     }
-    private boolean requirePermission(String action){
-        if(loggedInStaff == null){
+
+    private boolean requirePermission(String action) {
+        if (loggedInStaff == null) {
             setLastMessage("Please Logi first!!!");
             return false;
         }

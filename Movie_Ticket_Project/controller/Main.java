@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Scanner;
 import user.IStaff;
 
@@ -10,9 +12,9 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         Cinema cinema = new Cinema("CADT Cinema", "Phnom Penh");
         cinema.seedStaff();
-        cinema.demoPolymorphism();
+        // cinema.demoPolymorphism();
 
-        int choice;
+        int choice = -1;
 
         do {
 
@@ -21,7 +23,13 @@ public class Main {
                 printMainMenu();
 
                 System.out.print("Choose: ");
-                choice = sc.nextInt();
+                try {
+                    choice = sc.nextInt();
+                } catch (Exception e) {
+                    System.out.println("Invalid input. Enter number.");
+                    sc.nextLine();
+                    continue;
+                }
                 sc.nextLine();
 
                 switch (choice) {
@@ -45,7 +53,7 @@ public class Main {
 
                     case 0:
                         System.out.println("Goodbye!");
-                        break;
+                        System.exit(0);
 
                     default:
                         System.out.println("Invalid choice.");
@@ -53,139 +61,162 @@ public class Main {
 
             } else {
 
-                printStaffMenu(cinema);
+                IStaff staff = cinema.getLoggedInStaff();
 
+                Map<Integer, String> actions = new LinkedHashMap<>();
+                int option = 1;
+
+                System.out.println("\n=== STAFF MENU ===");
+                System.out.println("Logged in: " + staff);
+
+                if (staff.can(Cinema.CREATE_MOVIE)) actions.put(option++, "CREATE_MOVIE");
+                if (staff.can(Cinema.UPDATE_MOVIE)) actions.put(option++, "UPDATE_MOVIE");
+                if (staff.can(Cinema.DELETE_MOVIE)) actions.put(option++, "DELETE_MOVIE");
+                if (staff.can(Cinema.PRINT_MOVIES)) actions.put(option++, "CHECK_MOVIES");
+                if (staff.can(Cinema.DISPLAY_MOVIE)) actions.put(option++, "DISPLAY_MOVIE");
+                if (staff.can(Cinema.CREATE_CUSTOMER)) actions.put(option++, "CREATE_CUSTOMER");
+                if (staff.can(Cinema.SELL_TICKET)) actions.put(option++, "SELL_TICKET");
+                if (staff.can(Cinema.CHECK_TICKET)) actions.put(option++, "CHECK_TICKET");
+                if (staff.can(Cinema.CANCEL_TICKET)) actions.put(option++, "CANCEL_TICKET");
+                if (staff.can(Cinema.HANDLE_TICKET_ISSUE)) actions.put(option++, "HANDLE_TICKET_ISSUE");
+                if (staff.can(Cinema.HANDLE_SYSTEM)) actions.put(option++, "HANDLE_SYSTEM");
+                if (staff.can(Cinema.CREATE_STAFF)) actions.put(option++, "CREATE_STAFF");
+                if (staff.can(Cinema.MANAGE_STAFF)) actions.put(option++, "MANAGE_STAFF");
+
+                actions.put(option++, "LOGOUT");
+                actions.put(option++, "EXIT");
+
+
+
+                //print menu
+
+                for (Map.Entry<Integer, String> entry : actions.entrySet()) {
+                    System.out.println(entry.getKey() + ") " + entry.getValue());
+                }
                 System.out.print("Choose: ");
-                choice = sc.nextInt();
+                try {
+                    choice = sc.nextInt();
+                } catch (Exception e) {
+                    System.out.println("Invalid input. Enter number.");
+                    sc.nextLine();
+                    continue;
+                }
                 sc.nextLine();
+                String action = actions.get(choice);
+                if (action == null){
+                    System.out.println("Invalid chice");
+                    continue;
+                }
 
-                switch (choice) {
+                switch (action) {
 
-                    case 1: { // Create Movie
+                    case "CREATE_MOVIE": {
                         System.out.print("Movie ID: ");
-                        String movieId = sc.nextLine();
+                        String id = sc.nextLine();
 
                         System.out.print("Title: ");
                         String title = sc.nextLine();
 
-                        System.out.print("Duration: ");
-                        int duration = sc.nextInt();
-                        sc.nextLine();
+                        System.out.print("Duration (Minutes): ");
+                        int duration = Integer.parseInt(sc.nextLine());
 
-                        System.out.print("Release Date: ");
-                        String releaseDate = sc.nextLine();
+                        System.out.print("Release Date (YY-MM-DD): ");
+                        String date = sc.nextLine();
 
                         System.out.print("Genre: ");
                         String genre = sc.nextLine();
 
-                        cinema.createMovie(movieId, title, duration, releaseDate, genre);
-                        System.out.println(cinema.getLastMessage());
+                        cinema.createMovie(id, title, duration, date, genre);
                         break;
                     }
 
-                    case 2: { // Update Movie
+                    case "UPDATE_MOVIE": {
                         System.out.print("Movie ID: ");
-                        String movieId = sc.nextLine();
+                        String id = sc.nextLine();
 
                         System.out.print("New Title: ");
-                        String newTitle = sc.nextLine();
+                        String title = sc.nextLine();
 
-                        cinema.updateMovie(movieId, newTitle);
-                        System.out.println(cinema.getLastMessage());
+                        cinema.updateMovie(id, title);
                         break;
                     }
 
-                    case 3: { // Delete Movie
+                    case "DELETE_MOVIE": {
                         System.out.print("Movie ID: ");
-                        String movieId = sc.nextLine();
+                        String id = sc.nextLine();
 
-                        cinema.deleteMovie(movieId);
-                        System.out.println(cinema.getLastMessage());
+                        cinema.deleteMovie(id);
                         break;
                     }
 
-                    case 4: { // Check Movies
-                        cinema.checkMovies();
-                        System.out.println(cinema.getLastMessage());
+                    case "CHECK_MOVIES":
+                        cinema.printMovies();
                         break;
-                    }
 
-                    case 5: { // Display Movie
+                    case "DISPLAY_MOVIE": {
                         System.out.print("Movie ID: ");
-                        String movieId = sc.nextLine();
+                        String id = sc.nextLine();
 
-                        cinema.displayMovie(movieId);
-                        System.out.println(cinema.getLastMessage());
+                        cinema.displayMovie(id);
                         break;
                     }
 
-                    case 6: { // Create Customer
-                        System.out.print("Customer Name: ");
+                     case "CREATE_CUSTOMER": {
+                        System.out.print("Name: ");
                         String name = sc.nextLine();
 
                         System.out.print("Email: ");
                         String email = sc.nextLine();
 
                         cinema.createCustomer(name, email);
-                        System.out.println(cinema.getLastMessage());
                         break;
                     }
 
-                    case 7: { // Sell Ticket
+                    case "SELL_TICKET": {
                         System.out.print("Ticket ID: ");
-                        String ticketId = sc.nextLine();
+                        String tId = sc.nextLine();
 
                         System.out.print("Movie ID: ");
-                        String movieId = sc.nextLine();
+                        String mId = sc.nextLine();
 
                         System.out.print("Customer Name: ");
-                        String customerName = sc.nextLine();
+                        String name = sc.nextLine();
 
-                        cinema.sellTicket(ticketId, movieId, customerName);
-                        System.out.println(cinema.getLastMessage());
+                        cinema.sellTicket(tId, mId, name);
                         break;
                     }
 
-                    case 8: { // Check Ticket
+                    case "CHECK_TICKET":
                         cinema.checkTicket();
-                        System.out.println(cinema.getLastMessage());
+                        break;
+
+                    case "CANCEL_TICKET": {
+                        System.out.print("Ticket ID: ");
+                        String id = sc.nextLine();
+
+                        cinema.cancelTicket(id);
                         break;
                     }
 
-                    case 9: { // Cancel Ticket
+                    case "HANDLE_TICKET_ISSUE": {
                         System.out.print("Ticket ID: ");
-                        String ticketId = sc.nextLine();
-
-                        cinema.cancelTicket(ticketId);
-                        System.out.println(cinema.getLastMessage());
-                        break;
-                    }
-
-                    case 10: { // Handle Ticket Issue
-                        System.out.print("Ticket ID: ");
-                        String ticketId = sc.nextLine();
+                        String id = sc.nextLine();
 
                         System.out.print("Issue: ");
                         String issue = sc.nextLine();
 
-                        cinema.handleTicketIssue(ticketId, issue);
-                        System.out.println(cinema.getLastMessage());
+                        cinema.handleTicketIssue(id, issue);
                         break;
                     }
 
-                    case 11: { // Handle System
-                        System.out.println("System handled (demo action).");
-                        break;
-                    }
-
-                    case 12: { // Create Staff
-                        System.out.print("Staff ID: ");
+                    case "CREATE_STAFF": {
+                        System.out.print("ID: ");
                         String id = sc.nextLine();
 
                         System.out.print("Username: ");
                         String username = sc.nextLine();
 
-                        System.out.print("Full Name: ");
+                        System.out.print("Fullname: ");
                         String fullname = sc.nextLine();
 
                         System.out.print("Password: ");
@@ -197,40 +228,29 @@ public class Main {
                         System.out.print("Phone: ");
                         String phone = sc.nextLine();
 
-                        System.out.print("Position (manager/cashier/operator): ");
+                        System.out.print("Position: ");
                         String position = sc.nextLine();
 
                         cinema.createStaff(id, username, fullname, password, email, phone, position);
-                        System.out.println(cinema.getLastMessage());
                         break;
                     }
-
-                    case 13: { // Manage Staff
+                    case "MANAGE_STAFF":
                         cinema.manageStaff();
-                        System.out.println(cinema.getLastMessage());
                         break;
-                    }
 
-                    case 14: { // Logout
+                    case "LOGOUT":
                         cinema.staffLogout();
-                        System.out.println(cinema.getLastMessage());
                         break;
-                    }
 
-                    case 15: { // Exit
+                    case "EXIT":
                         System.out.println("Goodbye!");
-                        choice = 0;
-                        break;
-                    }
-
-                    default:
-                        System.out.println("Invalid choice.");
+                        System.exit(0);
                 }
+
+                System.out.println(cinema.getLastMessage());
             }
 
-        } while (choice != 0);
-
-        sc.close();
+        } while (true);
     }
 
     // =========================
@@ -239,55 +259,7 @@ public class Main {
     private static void printMainMenu() {
         System.out.println("\n=== MAIN MENU (Not Logged In) ===");
         System.out.println("1) Staff Login");
-        System.out.println("2) View Movies");
+        System.out.println("2) Check Movies");
         System.out.println("0) Exit");
-    }
-
-    private static void printStaffMenu(Cinema cinema) {
-        System.out.println("\n=== STAFF MENU (Logged In) ===");
-        System.out.println("Logged in staff: " + cinema.getLoggedInStaff());
-        IStaff staff = cinema.getLoggedInStaff();
-        int option = 1;
-        if (staff.can(Cinema.CREATE_MOVIE))
-            System.out.println(option++ + ") Create Movie");
-
-        if (staff.can(Cinema.UPDATE_MOVIE))
-            System.out.println(option++ + ") Update Movie");
-
-        if (staff.can(Cinema.DELETE_MOVIE))
-            System.out.println(option++ + ") Delete Movie");
-
-        if (staff.can(Cinema.CHECK_MOVIES))
-            System.out.println(option++ + ") Check Movies");
-
-        if (staff.can(Cinema.DISPLAY_MOVIE))
-            System.out.println(option++ + ") Display Movie");
-
-        if (staff.can(Cinema.CREATE_CUSTOMER))
-            System.out.println(option++ + ") Create Customer");
-
-        if (staff.can(Cinema.SELL_TICKET))
-            System.out.println(option++ + ") Sell Ticket");
-
-        if (staff.can(Cinema.CHECK_TICKET))
-            System.out.println(option++ + ") Check Ticket");
-
-        if (staff.can(Cinema.CANCEL_TICKET))
-            System.out.println(option++ + ") Cancel Ticket");
-
-        if (staff.can(Cinema.HANDLE_TICKET_ISSUE))
-            System.out.println(option++ + ") Handle Ticket Issue");
-
-        if (staff.can(Cinema.HANDLE_SYSTEM))
-            System.out.println(option++ + ") Handle System");
-
-        if (staff.can(Cinema.CREATE_STAFF))
-            System.out.println(option++ + ") Create Staff");
-
-        if (staff.can(Cinema.MANAGE_STAFF))
-            System.out.println(option++ + ") Manage Staff");
-
-        System.out.println(option++ + ") Logout");
-        System.out.println(option + ") Exit");
     }
 }
