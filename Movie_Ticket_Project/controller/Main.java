@@ -3,15 +3,20 @@ package controller;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
+
+import other.Customer;
+import other.Showtime;
 import user.IStaff;
 
 public class Main {
+    private static Cinema cinema;
 
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        Cinema cinema = new Cinema("CADT Cinema", "Phnom Penh");
+        cinema = new Cinema("CADT Cinema", "Phnom Penh");
         cinema.seedStaff();
+        cinema.checkShowtime();
         // cinema.demoPolymorphism();
 
         int choice = -1;
@@ -69,26 +74,37 @@ public class Main {
                 System.out.println("\n=== STAFF MENU ===");
                 System.out.println("Logged in: " + staff);
 
-                if (staff.can(Cinema.CREATE_MOVIE)) actions.put(option++, "CREATE_MOVIE");
-                if (staff.can(Cinema.UPDATE_MOVIE)) actions.put(option++, "UPDATE_MOVIE");
-                if (staff.can(Cinema.DELETE_MOVIE)) actions.put(option++, "DELETE_MOVIE");
-                if (staff.can(Cinema.PRINT_MOVIES)) actions.put(option++, "CHECK_MOVIES");
-                if (staff.can(Cinema.DISPLAY_MOVIE)) actions.put(option++, "DISPLAY_MOVIE");
-                if (staff.can(Cinema.CREATE_CUSTOMER)) actions.put(option++, "CREATE_CUSTOMER");
-                if (staff.can(Cinema.SELL_TICKET)) actions.put(option++, "SELL_TICKET");
-                if (staff.can(Cinema.CHECK_TICKET)) actions.put(option++, "CHECK_TICKET");
-                if (staff.can(Cinema.CANCEL_TICKET)) actions.put(option++, "CANCEL_TICKET");
-                if (staff.can(Cinema.HANDLE_TICKET_ISSUE)) actions.put(option++, "HANDLE_TICKET_ISSUE");
-                if (staff.can(Cinema.HANDLE_SYSTEM)) actions.put(option++, "HANDLE_SYSTEM");
-                if (staff.can(Cinema.CREATE_STAFF)) actions.put(option++, "CREATE_STAFF");
-                if (staff.can(Cinema.MANAGE_STAFF)) actions.put(option++, "MANAGE_STAFF");
+                if (staff.can(Cinema.CREATE_MOVIE))
+                    actions.put(option++, "CREATE_MOVIE");
+                if (staff.can(Cinema.UPDATE_MOVIE))
+                    actions.put(option++, "UPDATE_MOVIE");
+                if (staff.can(Cinema.DELETE_MOVIE))
+                    actions.put(option++, "DELETE_MOVIE");
+                if (staff.can(Cinema.PRINT_MOVIES))
+                    actions.put(option++, "CHECK_MOVIES");
+                if (staff.can(Cinema.CREATE_SHOWTIME))
+                    actions.put(option++, "CREATE_SHOWTIME");
+                if (staff.can(Cinema.CHECK_SHOWTIME))
+                    actions.put(option++, "CHECK_SHOWTIME");
+                if (staff.can(Cinema.DISPLAY_MOVIE))
+                    actions.put(option++, "DISPLAY_MOVIE");
+                if (staff.can(Cinema.CREATE_CUSTOMER))
+                    actions.put(option++, "CREATE_CUSTOMER");
+                if (staff.can(Cinema.SELL_TICKET))
+                    actions.put(option++, "SELL_TICKET");
+                if (staff.can(Cinema.CHECK_TICKET))
+                    actions.put(option++, "CHECK_TICKET");
+                if (staff.can(Cinema.CANCEL_TICKET))
+                    actions.put(option++, "CANCEL_TICKET");
+                if (staff.can(Cinema.CREATE_STAFF))
+                    actions.put(option++, "CREATE_STAFF");
+                if (staff.can(Cinema.MANAGE_STAFF))
+                    actions.put(option++, "MANAGE_STAFF");
 
                 actions.put(option++, "LOGOUT");
                 actions.put(option++, "EXIT");
 
-
-
-                //print menu
+                // print menu
 
                 for (Map.Entry<Integer, String> entry : actions.entrySet()) {
                     System.out.println(entry.getKey() + ") " + entry.getValue());
@@ -103,7 +119,7 @@ public class Main {
                 }
                 sc.nextLine();
                 String action = actions.get(choice);
-                if (action == null){
+                if (action == null) {
                     System.out.println("Invalid chice");
                     continue;
                 }
@@ -129,6 +145,25 @@ public class Main {
                         cinema.createMovie(id, title, duration, date, genre);
                         break;
                     }
+                    case "CREATE_SHOWTIME": {
+                        System.out.print("Movie ID: ");
+                        String movieId = sc.nextLine();
+
+                        System.out.print("Time (HH:MM): ");
+                        String time = sc.nextLine();
+
+                        System.out.print("Date (YYYY-MM-DD): ");
+                        String date = sc.nextLine();
+
+                        System.out.print("Hall Number: ");
+                        int hall = Integer.parseInt(sc.nextLine());
+
+                        cinema.createShowtime(time, date, hall, movieId);
+                        break;
+                    }
+                    case "CHECK_SHOWTIME":
+                        cinema.checkShowtime();
+                        break;
 
                     case "UPDATE_MOVIE": {
                         System.out.print("Movie ID: ");
@@ -161,7 +196,7 @@ public class Main {
                         break;
                     }
 
-                     case "CREATE_CUSTOMER": {
+                    case "CREATE_CUSTOMER": {
                         System.out.print("Name: ");
                         String name = sc.nextLine();
 
@@ -173,8 +208,6 @@ public class Main {
                     }
 
                     case "SELL_TICKET": {
-                        System.out.print("Ticket ID: ");
-                        String tId = sc.nextLine();
 
                         System.out.print("Movie ID: ");
                         String mId = sc.nextLine();
@@ -182,7 +215,15 @@ public class Main {
                         System.out.print("Customer Name: ");
                         String name = sc.nextLine();
 
-                        cinema.sellTicket(tId, mId, name);
+                        // Create customer object
+                        Customer customer = new Customer(name, "", false);
+
+                        // Get showtime object by movie ID
+                        Showtime showtime = cinema.getShowtimeByMovieId(mId);
+
+                        // Call sellTicket (handles everything inside)
+                        cinema.sellTicket(showtime, customer, 10.0, "Regular"); // example price & type
+
                         break;
                     }
 
@@ -195,17 +236,6 @@ public class Main {
                         String id = sc.nextLine();
 
                         cinema.cancelTicket(id);
-                        break;
-                    }
-
-                    case "HANDLE_TICKET_ISSUE": {
-                        System.out.print("Ticket ID: ");
-                        String id = sc.nextLine();
-
-                        System.out.print("Issue: ");
-                        String issue = sc.nextLine();
-
-                        cinema.handleTicketIssue(id, issue);
                         break;
                     }
 

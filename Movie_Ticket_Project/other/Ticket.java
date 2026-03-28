@@ -1,24 +1,27 @@
 package other;
 
 public class Ticket {
+
+    public static int getTicketIDCounter() {
+        return ticketIDCounter;
+    }
     private Showtime showtime;
     private int ticketId;
     private Movie movie;
     private Customer customer;
     private double price;
     private String ticketType;
-    private String issue = "";
     private static int ticketIDCounter = 0;
 
-    public Ticket(Showtime showtime, int ticketId, Movie movie, Customer customer, double price, String ticketType) {
+    public Ticket(Showtime showtime,  Customer customer, double price, String ticketType) {
         this.showtime = showtime;
         this.ticketId = ticketId;
-        this.movie = movie;
         this.customer = customer;
         this.price = price;
         this.ticketType = ticketType;
-        ticketIDCounter++;
+        this.ticketId=ticketIDCounter++;
     }
+
 
     public int getTicketId() {
         return ticketId;
@@ -26,6 +29,14 @@ public class Ticket {
 
     public Movie getMovie() {
         return movie;
+    }
+    
+    public Showtime getShowtime() {
+        return showtime;
+    }
+
+    public void setShowtime(Showtime showtime) {
+        this.showtime = showtime;
     }
 
     public Customer getCustomer() {
@@ -39,11 +50,6 @@ public class Ticket {
     public String getTicketType() {
         return ticketType;
     }
-
-    public String getIssue() {
-        return issue;
-    }
-
     public void setMovie(Movie movie) {
         if (movie != null)
             this.movie = movie;
@@ -63,11 +69,12 @@ public class Ticket {
         if (ticketType != null && !ticketType.isEmpty())
             this.ticketType = ticketType;
     }
-
-    public void setIssue(String issue) {
-        if (issue != null)
-            this.issue = issue;
+        public static int getNextTicketId(){
+        ticketIDCounter++;
+        return ticketIDCounter;
     }
+
+
 
     @Override
     public String toString() {
@@ -76,10 +83,11 @@ public class Ticket {
                 ", Movie=" + showtime.getMovie().getTitle() +
                 ", Time=" + showtime.getTime() +
                 ", Date=" + showtime.getDate() +
+                ", Hall=" + showtime.getHallNumber() +
                 ", Customer=" + customer.getName() +
                 ", Price=" + price +
                 ", Type='" + ticketType + '\'' +
-                (issue.isEmpty() ? "" : ", Issue='" + issue + '\'') +
                 '}';
     }
+
 }

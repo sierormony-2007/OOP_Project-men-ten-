@@ -27,13 +27,12 @@ public class Cinema {
     public static final String PRINT_MOVIES = "CHECK_MOVIES";
     public static final String DISPLAY_MOVIE = "DISPLAY_MOVIE";
     public static final String CREATE_CUSTOMER = "CREATE_CUSTOMER";
+    public static final String CREATE_SHOWTIME = "CREATE_SHOWTIME";
+    public static final String CHECK_SHOWTIME = "CHECK_SHOWTIME";
     // Ticket actons
     public static final String SELL_TICKET = "SELL_TICKET";
     public static final String CHECK_TICKET = "CHECK_TICKET";
     public static final String CANCEL_TICKET = "CANCEL_TICKET";
-    public static final String HANDLE_TICKET_ISSUE = "HANDLE_TICKET_ISSUE";
-    // System
-    public static final String HANDLE_SYSTEM = "HANDLE_SYSTEM";
 
     // manager
     public static final String CREATE_STAFF = "CREATE_STAFF";
@@ -99,6 +98,7 @@ public class Cinema {
             this.address = address.trim();
         }
     }
+
 
     public boolean isStafffLoggedIn() {
         return loggedInStaff != null;
@@ -176,62 +176,75 @@ public class Cinema {
         }
     }
 
-    public void demoPolymorphism() {
+    // public void demoPolymorphism() {
 
-        // String[] actions = {
-        // CREATE_MOVIE;
-        // CREATE_CUSTOMER;
-        // SELL_TICKET;
-        // DELETE_MOVIE;
-        // CANCEL_TICKET;
-        // CHECK_TICKET;
-        // UPDATE_MOVIE;
-        // CHECK_MOVIES;
-        // DISPLAY_MOVIE;
-        // HANDLE_SYSTEM;
-        // HANDLE_TICKET_ISSUE;
-        // CREATE_STAFF;
-        // MANAGE_STAFF;
-        // };
+    // // String[] actions = {
+    // // CREATE_MOVIE;
+    // // CREATE_CUSTOMER;
+    // // SELL_TICKET;
+    // // DELETE_MOVIE;
+    // // CANCEL_TICKET;
+    // // CHECK_TICKET;
+    // // UPDATE_MOVIE;
+    // // CHECK_MOVIES;
+    // // DISPLAY_MOVIE;
+    // // HANDLE_SYSTEM;
+    // // HANDLE_TICKET_ISSUE;
+    // // CREATE_STAFF;
+    // // MANAGE_STAFF;
+    // // };
 
-        for (IStaff staff : staffs) {
+    // for (IStaff staff : staffs) {
 
-            // for(String action : actions){
+    // // for(String action : actions){
 
-            // System.out.println(
-            // action + " -> " + staff.can(action)
-            // );
+    // // System.out.println(
+    // // action + " -> " + staff.can(action)
+    // // );
 
-            // }
+    // // }
 
-            System.out
-                    .println("\nStaff: " + staff.getUsername() + " -->  CREATE_MOVIE  -->  " + staff.can(CREATE_MOVIE));
-            System.out.println(
-                    "\nStaff: " + staff.getUsername() + " -->  CREATE_CUSTOMER  -->  " + staff.can(CREATE_CUSTOMER));
-            System.out.println("\nStaff: " + staff.getUsername() + " -->  SELL_TICKET  -->  " + staff.can(SELL_TICKET));
-            System.out
-                    .println("\nStaff: " + staff.getUsername() + " -->  DELETE_MOVIE  -->  " + staff.can(DELETE_MOVIE));
-            System.out.println(
-                    "\nStaff: " + staff.getUsername() + " -->  CANCEL_TICKET  -->  " + staff.can(CANCEL_TICKET));
-            System.out
-                    .println("\nStaff: " + staff.getUsername() + " -->  CHECK_TICKET  -->  " + staff.can(CHECK_TICKET));
-            System.out
-                    .println("\nStaff: " + staff.getUsername() + " -->  UPDATE_MOVIE  -->  " + staff.can(UPDATE_MOVIE));
-            System.out
-                    .println("\nStaff: " + staff.getUsername() + " -->  CHECK_MOVIE  -->  " + staff.can(PRINT_MOVIES));
-            System.out.println(
-                    "\nStaff: " + staff.getUsername() + " -->  DISPLAY_MOVIE  -->  " + staff.can(DISPLAY_MOVIE));
-            System.out.println(
-                    "\nStaff: " + staff.getUsername() + " -->  HANDLE_SYSTEM  -->  " + staff.can(HANDLE_SYSTEM));
-            System.out.println("\nStaff: " + staff.getUsername() + " -->  HANDLE_TICKET_ISSUE  -->  "
-                    + staff.can(HANDLE_TICKET_ISSUE));
-            System.out.println(
-                    "\nStaff: " + staff.getUsername() + " -->  CREATAE_STAFF  -->  " + staff.can(CREATE_STAFF));
-            System.out
-                    .println("\nStaff: " + staff.getUsername() + " -->  MANAGE_STAFF  -->  " + staff.can(MANAGE_STAFF));
+    // System.out
+    // .println("\nStaff: " + staff.getUsername() + " --> CREATE_MOVIE --> " +
+    // staff.can(CREATE_MOVIE));
+    // System.out.println(
+    // "\nStaff: " + staff.getUsername() + " --> CREATE_CUSTOMER --> " +
+    // staff.can(CREATE_CUSTOMER));
+    // System.out.println("\nStaff: " + staff.getUsername() + " --> SELL_TICKET -->
+    // " + staff.can(SELL_TICKET));
+    // System.out
+    // .println("\nStaff: " + staff.getUsername() + " --> DELETE_MOVIE --> " +
+    // staff.can(DELETE_MOVIE));
+    // System.out.println(
+    // "\nStaff: " + staff.getUsername() + " --> CANCEL_TICKET --> " +
+    // staff.can(CANCEL_TICKET));
+    // System.out
+    // .println("\nStaff: " + staff.getUsername() + " --> CHECK_TICKET --> " +
+    // staff.can(CHECK_TICKET));
+    // System.out
+    // .println("\nStaff: " + staff.getUsername() + " --> UPDATE_MOVIE --> " +
+    // staff.can(UPDATE_MOVIE));
+    // System.out
+    // .println("\nStaff: " + staff.getUsername() + " --> CHECK_MOVIE --> " +
+    // staff.can(PRINT_MOVIES));
+    // System.out.println(
+    // "\nStaff: " + staff.getUsername() + " --> DISPLAY_MOVIE --> " +
+    // staff.can(DISPLAY_MOVIE));
+    // System.out.println(
+    // "\nStaff: " + staff.getUsername() + " --> HANDLE_SYSTEM --> " +
+    // staff.can(HANDLE_SYSTEM));
+    // System.out.println("\nStaff: " + staff.getUsername() + " -->
+    // HANDLE_TICKET_ISSUE --> "
+    // + staff.can(HANDLE_TICKET_ISSUE));
+    // System.out.println(
+    // "\nStaff: " + staff.getUsername() + " --> CREATAE_STAFF --> " +
+    // staff.can(CREATE_STAFF));
+    // System.out
+    // .println("\nStaff: " + staff.getUsername() + " --> MANAGE_STAFF --> " +
+    // staff.can(MANAGE_STAFF));
 
-        }
-    }
+    // }
+    // }
 
     // =========================
     // LOGIN
@@ -365,7 +378,7 @@ public class Cinema {
             }
 
             // Everything valid → create movie
-            Movie tempMovie = new Movie(id, title, (double) duration, releaseDate, genre);
+            Movie tempMovie = new Movie(movieId, title, (double) duration, releaseDate, genre);
             movies.add(tempMovie);
             lastMessage = "Movie created successfully.";
 
@@ -436,46 +449,58 @@ public class Cinema {
     // DISPLAY MOVIE
     public void displayMovie(String movieId) {
         try {
-            int id = Integer.parseInt(movieId);
+            if (movieId == null) {
+                lastMessage = "Invalid Movie ID (null)";
+                return;
+            }
+
             for (Movie m : movies) {
-                if (m.getMovieId() == id) {
+                if (m.getMovieId().equals(movieId)) { // comparing Strings with equals
                     System.out.println(m);
                     lastMessage = "Movie displayed successfully.";
                     return;
                 }
             }
             lastMessage = "Movie not found.";
-        } catch (NumberFormatException e) {
-            lastMessage = "Invalid Movie ID";
+        } catch (Exception e) {
+            lastMessage = "An error occurred: " + e.getMessage();
         }
     }
 
     // SELL TICKET
 
-    public void sellTicket(String ticketId, String movieId, String customerName) {
-
+    public void sellTicket(Showtime showtime, Customer customer, double price, String ticketType) {
         if (!requireLogin())
             return;
 
         try {
-            int id = Integer.parseInt(ticketId);
-
-            Showtime showtime = findShowtimeByMovieId(movieId);
-
             if (showtime == null) {
-                lastMessage = "No showtime available.";
+                System.out.println("Error: Showtime cannot be null.");
                 return;
             }
+            if (customer == null || customer.getName().isEmpty()) {
+                System.out.println("Error: Invalid customer.");
+                return;
+            }
+            if (price < 0) {
+                System.out.println("Error: Price cannot be negative.");
+                return;
+            }
+            if (ticketType == null || ticketType.isEmpty()) {
+                ticketType = "Regular"; // default ticket type
+            }
 
-            Customer customer = new Customer(customerName, "", false);
+            // Auto-generate ticket ID
+            int ticketId = Ticket.getNextTicketId(); // static method in Ticket class
+            Ticket ticket = new Ticket(showtime, customer, price, ticketType);
 
-            Ticket t = new Ticket(id, showtime, customer, 100.0, "Standard");
+            // Add ticket to your cinema's ticket list
+            tickets.add(ticket); // assuming you have List<Ticket> tickets in Cinema
 
-            tickets.add(t);
-            lastMessage = "Ticket sold successfully.";
+            System.out.println("Ticket sold successfully! Ticket ID: " + ticketId);
 
-        } catch (NumberFormatException e) {
-            lastMessage = "Invalid ticket ID (must be number)";
+        } catch (Exception e) {
+            System.out.println("An error occurred while selling ticket: " + e.getMessage());
         }
     }
 
@@ -562,25 +587,6 @@ public class Cinema {
         }
     }
 
-    // HANDLE TICKET ISSUE
-    public void handleTicketIssue(String ticketId, String issue) {
-
-        if (!requireLogin())
-            return;
-
-        int id = Integer.parseInt(ticketId);
-
-        for (Ticket t : tickets) {
-            if (t.getTicketId() == id) {
-                t.setIssue(issue);
-                lastMessage = "Ticket issue updated.";
-                return;
-            }
-        }
-
-        lastMessage = "Ticket not found.";
-    }
-
     // CREATE SHOWTIME
     public void createShowtime(String time, String date, int hall, String movieId) {
 
@@ -625,21 +631,26 @@ public class Cinema {
             return null;
 
         for (Movie m : movies) {
-            if (m.getMovieId() == Integer.parseInt(movieId.trim())) {
+            if (m.getMovieId().equals(movieId.trim())) {
                 return m;
             }
         }
-
+ 
         return null;
     }
-    private Showtime findShowtimeByMovieId(String movieId) {  
-    for (Showtime s : showtimes) {  
-        if (s.getMovie().getMovieId().equals(movieId)) {  
-            return s;  
-        }  
-    }  
-    return null;  
-}
+    
+    public Showtime getShowtimeByMovieId(String movieId) {
+        if (movieId == null || movieId.isEmpty())
+            return null;
+
+        for (Showtime s : showtimes) {
+            if (s.getMovie() != null && movieId.equals(s.getMovie().getMovieId())) {
+                return s; // return the first matching showtime
+            }
+        }
+        return null; // no showtime found
+    }
+
 
     private boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
