@@ -34,6 +34,7 @@ public class Showtime {
                 ", Date='" + date + '\'' +
                 ", Hall=" + hallNumber +
                 ", Movie=" + movie.getTitle() +
+                
                 '}';
     }
 }

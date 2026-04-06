@@ -1,8 +1,10 @@
 package controller;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Scanner;
 import other.Customer;
 import other.Movie;
 import other.Showtime;
@@ -52,6 +54,7 @@ public class Cinema {
     private ArrayList<Ticket> tickets = new ArrayList<>();
 
     // LOGIN
+    private int ticketCounter = 1;
 
     private IStaff loggedInStaff = null;
 
@@ -99,7 +102,6 @@ public class Cinema {
         }
     }
 
-
     public boolean isStafffLoggedIn() {
         return loggedInStaff != null;
     }
@@ -124,16 +126,6 @@ public class Cinema {
                 "0886477296", 5000.0, "70");
         // Manager manager = new Manager(managerStaff, "70");
         staffs.add(m1);
-
-        Staff CS1 = new CashierStaff("CS01", "cashier", "Sarong Kimsorng", "1234", "cashier@cinema.com", "111111",
-                500.0, "morning");
-        // CashierStaff cashier = new CashierStaff(CS, "morning");
-        staffs.add(CS1);
-
-        Staff OS = new OperatorStaff("OS01", "operator", "Chhai Rady", "1234", "jasmin01@gmail.com", "099875630",
-                400, "Sound");
-        // OperatorStaff operatorstaff = new OperatorStaff(OS, "Sound");
-        staffs.add(OS);
 
         Staff s1 = new Staff("m00", "manager_01", "SIE RORMONY", "sierormony_18102007", "nii18102007@gmail.com",
                 "0886477296", 5000.0) {
@@ -272,7 +264,7 @@ public class Cinema {
                 }
 
                 loggedInStaff = s;
-                setLastMessage("Login successful. Welcome " + s.getUsername());
+                setLastMessage("Login successful. Welcome " + s.getUsername() + " " + s.getFullName() + "!");
                 return;
             }
         }
@@ -361,6 +353,15 @@ public class Cinema {
             if (isBlank(title))
                 throw new InvalidMovieException("Movie title cannot be empty.");
 
+            // duration
+            try {
+                if (duration < 90 || duration > 240) {
+                    throw new InvalidMovieException("Duration must be between 90 and 240 minutes");
+                }
+            } catch (Exception e) {
+                throw new InvalidMovieException("Invalid duration! Must be a number between 90 and 240.");
+            }
+
             // Validate genre
             if (isBlank(genre))
                 throw new InvalidMovieException("Movie genre cannot be empty.");
@@ -378,17 +379,38 @@ public class Cinema {
             }
 
             // Everything valid → create movie
-            Movie tempMovie = new Movie(movieId, title, (double) duration, releaseDate, genre);
+            Movie tempMovie = new Movie(movieId, title, duration, releaseDate, genre);
+            tempMovie.updateStatus();
             movies.add(tempMovie);
             lastMessage = "Movie created successfully.";
-
-        } catch (InvalidMovieException e) {
-            // Catch custom exception and set last message
-            lastMessage = e.getMessage();
         } catch (Exception e) {
             // Catch-all for any unexpected exception
             lastMessage = "An unexpected error occurred: " + e.getMessage();
-            e.printStackTrace();
+        }
+    }
+
+    // select genre from list of genre
+    public String selectGenre(Scanner sc) {
+        String[] genres = { "Action", "Comedy", "Romance", "Horror", "Sci-Fi", "etc." };
+
+        System.out.println("Select Genre:");
+        for (int i = 0; i < genres.length; i++) {
+            System.out.println((i + 1) + ") " + genres[i]);
+        }
+
+        try {
+            int choice = Integer.parseInt(sc.nextLine());
+
+            if (choice < 1 || choice > genres.length) {
+                System.out.println("Invalid genre choice!");
+                return null;
+            }
+
+            return genres[choice - 1];
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Must be a number.");
+            return null;
         }
     }
 
@@ -409,24 +431,24 @@ public class Cinema {
 
     // UPDATE MOVIE
 
-    public void updateMovie(String movieId, String newTitle) {
+    // public void updateMovie(String movieId, String newTitle) {
 
-        if (!requireLogin())
-            return;
+    // if (!requireLogin())
+    // return;
 
-        Movie movie = findMovieById(movieId);
+    // Movie movie = findMovieById(movieId);
 
-        if (movie == null) {
-            lastMessage = "Movie not found.";
-            return;
-        }
+    // if (movie == null) {
+    // lastMessage = "Movie not found.";
+    // return;
+    // }
 
-        if (!isBlank(newTitle)) {
-            movie.setTitle(newTitle);
-        }
+    // if (!isBlank(newTitle)) {
+    // movie.setTitle(newTitle);
+    // }
 
-        lastMessage = "Movie updated successfully.";
-    }
+    // lastMessage = "Movie updated successfully.";
+    // }
 
     // DELETE MOVIE
 
@@ -469,38 +491,50 @@ public class Cinema {
 
     // SELL TICKET
 
-    public void sellTicket(Showtime showtime, Customer customer, double price, String ticketType) {
+    public void sellTicket(String movieId, String customerName, int quantity, String ticketType) {
+
         if (!requireLogin())
             return;
 
         try {
+            // validate quantiy
+            if (quantity <= 0) {
+                lastMessage = "Quantity must be greater than 0.";
+                return;
+            }
+            // Find showtime
+            Showtime showtime = getShowtimeByMovieId(movieId);
+
             if (showtime == null) {
-                System.out.println("Error: Showtime cannot be null.");
+                lastMessage = "No showtime available.";
                 return;
             }
-            if (customer == null || customer.getName().isEmpty()) {
-                System.out.println("Error: Invalid customer.");
-                return;
+
+            // Create customer
+            Customer customer = new Customer(customerName, "", false);
+            customers.add(customer);
+
+            // Price logic
+            double price;
+            if (ticketType.equalsIgnoreCase("VIP")) {
+                price = 20.0;
+            } else {
+                price = 12.0;
+                ticketType = "Normal"; // default
             }
-            if (price < 0) {
-                System.out.println("Error: Price cannot be negative.");
-                return;
-            }
-            if (ticketType == null || ticketType.isEmpty()) {
-                ticketType = "Regular"; // default ticket type
+            // if memeber
+            price = customer.applyDiscount(price);
+
+            // Create multiple tickets
+            for (int i = 0; i < quantity; i++) {
+                Ticket t = new Ticket(showtime,  customer, price, ticketType);
+                tickets.add(t);
             }
 
-            // Auto-generate ticket ID
-            int ticketId = Ticket.getNextTicketId(); // static method in Ticket class
-            Ticket ticket = new Ticket(showtime, customer, price, ticketType);
-
-            // Add ticket to your cinema's ticket list
-            tickets.add(ticket); // assuming you have List<Ticket> tickets in Cinema
-
-            System.out.println("Ticket sold successfully! Ticket ID: " + ticketId);
+            lastMessage = quantity + " " + ticketType + " ticket(s) sold successfully!";
 
         } catch (Exception e) {
-            System.out.println("An error occurred while selling ticket: " + e.getMessage());
+            lastMessage = "Error selling ticket: " + e.getMessage();
         }
     }
 
@@ -532,6 +566,7 @@ public class Cinema {
         }
 
         for (Movie m : movies) {
+            m.updateStatus();
             System.out.println(m);
         }
 
@@ -588,22 +623,49 @@ public class Cinema {
     }
 
     // CREATE SHOWTIME
-    public void createShowtime(String time, String date, int hall, String movieId) {
-
-        if (!requireLogin())
-            return;
-
+    public void createShowtime(String movieId, String timeStr, String dateStr, int hallNumber) {
         Movie movie = findMovieById(movieId);
-
         if (movie == null) {
-            lastMessage = "Movie not found.";
+            System.out.println("Movie not found!");
             return;
         }
 
-        Showtime st = new Showtime(time, date, hall, movie);
-        showtimes.add(st);
+        String status = movie.getStatus();
+        if (status.equals("Coming Soon")) {
+            System.out.println("Cannot create showtime: Movie is not released yet.");
+            return;
+        } else if (status.equals("Not Released")) {
+            System.out.println("Cannot create showtime: Movie release date has passed.");
+            return;
+        }
 
-        lastMessage = "Showtime created successfully.";
+        // Validate time
+        LocalTime time;
+        try {
+            time = LocalTime.parse(timeStr);
+        } catch (Exception e) {
+            System.out.println("Invalid time format. Use HH:mm");
+            return;
+        }
+
+        // Validate date
+        LocalDate date;
+        try {
+            date = LocalDate.parse(dateStr);
+        } catch (Exception e) {
+            System.out.println("Invalid date format. Use yyyy-MM-dd");
+            return;
+        }
+
+        // Hall number check
+        if (hallNumber <= 0) {
+            System.out.println("Invalid hall number.");
+            return;
+        }
+
+        Showtime showtime = new Showtime(time.toString(), date.toString(), hallNumber, movie);
+        showtimes.add(showtime);
+        System.out.println("Showtime created successfully for movie: " + movie.getTitle());
     }
 
     // CHECK SHOWTIME
@@ -635,10 +697,10 @@ public class Cinema {
                 return m;
             }
         }
- 
+
         return null;
     }
-    
+
     public Showtime getShowtimeByMovieId(String movieId) {
         if (movieId == null || movieId.isEmpty())
             return null;
@@ -650,7 +712,6 @@ public class Cinema {
         }
         return null; // no showtime found
     }
-
 
     private boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();

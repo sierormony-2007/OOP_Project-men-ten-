@@ -3,9 +3,6 @@ package controller;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
-
-import other.Customer;
-import other.Showtime;
 import user.IStaff;
 
 public class Main {
@@ -76,8 +73,8 @@ public class Main {
 
                 if (staff.can(Cinema.CREATE_MOVIE))
                     actions.put(option++, "CREATE_MOVIE");
-                if (staff.can(Cinema.UPDATE_MOVIE))
-                    actions.put(option++, "UPDATE_MOVIE");
+                // if (staff.can(Cinema.UPDATE_MOVIE))
+                // actions.put(option++, "UPDATE_MOVIE");
                 if (staff.can(Cinema.DELETE_MOVIE))
                     actions.put(option++, "DELETE_MOVIE");
                 if (staff.can(Cinema.PRINT_MOVIES))
@@ -140,41 +137,47 @@ public class Main {
                         String date = sc.nextLine();
 
                         System.out.print("Genre: ");
-                        String genre = sc.nextLine();
+                        String genre = null;
+                        while (genre == null) {
+                            genre = cinema.selectGenre(sc);
+                        }
 
                         cinema.createMovie(id, title, duration, date, genre);
                         break;
                     }
                     case "CREATE_SHOWTIME": {
-                        System.out.print("Movie ID: ");
-                        String movieId = sc.nextLine();
+                        try {
+                            System.out.print("Movie ID: ");
+                            String movieId = sc.nextLine();
 
-                        System.out.print("Time (HH:MM): ");
-                        String time = sc.nextLine();
+                            System.out.print("Time (HH:MM): ");
+                            String time = sc.nextLine();
 
-                        System.out.print("Date (YYYY-MM-DD): ");
-                        String date = sc.nextLine();
+                            System.out.print("Date (YYYY-MM-DD): ");
+                            String date = sc.nextLine();
+                            System.out.print("Hall Number: ");
+                            int hallNumber = Integer.parseInt(sc.nextLine());
+                            cinema.createShowtime(movieId, time, date, hallNumber);
 
-                        System.out.print("Hall Number: ");
-                        int hall = Integer.parseInt(sc.nextLine());
-
-                        cinema.createShowtime(time, date, hall, movieId);
+                        } catch (Exception e) {
+                            System.out.println("Error creating showtime: " + e.getMessage());
+                        }
                         break;
                     }
                     case "CHECK_SHOWTIME":
                         cinema.checkShowtime();
                         break;
 
-                    case "UPDATE_MOVIE": {
-                        System.out.print("Movie ID: ");
-                        String id = sc.nextLine();
+                    // case "UPDATE_MOVIE": {
+                    // System.out.print("Movie ID: ");
+                    // String id = sc.nextLine();
 
-                        System.out.print("New Title: ");
-                        String title = sc.nextLine();
+                    // System.out.print("New Title: ");
+                    // String title = sc.nextLine();
 
-                        cinema.updateMovie(id, title);
-                        break;
-                    }
+                    // cinema.updateMovie(id, title);
+                    // break;
+                    // }
 
                     case "DELETE_MOVIE": {
                         System.out.print("Movie ID: ");
@@ -215,15 +218,32 @@ public class Main {
                         System.out.print("Customer Name: ");
                         String name = sc.nextLine();
 
-                        // Create customer object
-                        Customer customer = new Customer(name, "", false);
+                        System.out.print("Number of Tickets: ");
+                        int qty;
+                        try {
+                            qty = Integer.parseInt(sc.nextLine());
+                            if (qty <= 0) {
+                                System.out.println("Quantity must be greater than 0!");
+                                break;
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid number!");
+                            break;
+                        }
 
-                        // Get showtime object by movie ID
-                        Showtime showtime = cinema.getShowtimeByMovieId(mId);
+                        System.out.println("Choose Ticket Type:");
+                        System.out.println("1) Normal ($12)");
+                        System.out.println("2) VIP ($20)");
+                        try {
+                            choice = Integer.parseInt(sc.nextLine());
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid choice!");
+                            break;
+                        }
 
-                        // Call sellTicket (handles everything inside)
-                        cinema.sellTicket(showtime, customer, 10.0, "Regular"); // example price & type
+                        String type = (choice == 2) ? "VIP" : "Normal";
 
+                        cinema.sellTicket(mId, name, qty, type);
                         break;
                     }
 

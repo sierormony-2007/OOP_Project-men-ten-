@@ -2,41 +2,34 @@ package other;
 
 public class Ticket {
 
-    public static int getTicketIDCounter() {
-        return ticketIDCounter;
-    }
-    private Showtime showtime;
+    private static int ticketIDCounter = 1; // start from 1 (better)
+
     private int ticketId;
-    private Movie movie;
+    private Showtime showtime;
     private Customer customer;
     private double price;
     private String ticketType;
-    private static int ticketIDCounter = 0;
 
-    public Ticket(Showtime showtime,  Customer customer, double price, String ticketType) {
+    // =========================
+    // CONSTRUCTOR
+    // =========================
+    public Ticket(Showtime showtime, Customer customer, double price, String ticketType) {
+        this.ticketId = ticketIDCounter++; // auto ID
         this.showtime = showtime;
-        this.ticketId = ticketId;
         this.customer = customer;
         this.price = price;
         this.ticketType = ticketType;
-        this.ticketId=ticketIDCounter++;
     }
 
-
+    // =========================
+    // GETTERS
+    // =========================
     public int getTicketId() {
         return ticketId;
     }
 
-    public Movie getMovie() {
-        return movie;
-    }
-    
     public Showtime getShowtime() {
         return showtime;
-    }
-
-    public void setShowtime(Showtime showtime) {
-        this.showtime = showtime;
     }
 
     public Customer getCustomer() {
@@ -50,9 +43,13 @@ public class Ticket {
     public String getTicketType() {
         return ticketType;
     }
-    public void setMovie(Movie movie) {
-        if (movie != null)
-            this.movie = movie;
+
+    // =========================
+    // SETTERS (SAFE)
+    // =========================
+    public void setShowtime(Showtime showtime) {
+        if (showtime != null)
+            this.showtime = showtime;
     }
 
     public void setCustomer(Customer customer) {
@@ -69,13 +66,10 @@ public class Ticket {
         if (ticketType != null && !ticketType.isEmpty())
             this.ticketType = ticketType;
     }
-        public static int getNextTicketId(){
-        ticketIDCounter++;
-        return ticketIDCounter;
-    }
 
-
-
+    // =========================
+    // toString()
+    // =========================
     @Override
     public String toString() {
         return "Ticket{" +
@@ -89,5 +83,4 @@ public class Ticket {
                 ", Type='" + ticketType + '\'' +
                 '}';
     }
-
 }

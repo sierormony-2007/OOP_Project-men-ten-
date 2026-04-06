@@ -1,28 +1,26 @@
 package other;
+
 public class Customer {
 
     private int customerId;
     private String name;
     private String phoneNumber;
-    private boolean isMember;
+    private boolean member;   // improved naming
 
     private static int totalCustomers = 0;
 
     // =========================
     // CONSTRUCTORS
     // =========================
-    public Customer(String name, String phoneNumber, boolean isMember) {
-        this.customerId = ++totalCustomers;   // safer auto-increment
+    public Customer(String name, String phoneNumber, boolean member) {
+        this.customerId = ++totalCustomers; // auto increment
         this.name = isBlank(name) ? "Unknown" : name.trim();
         this.phoneNumber = isBlank(phoneNumber) ? "Unknown" : phoneNumber.trim();
-        this.isMember = isMember;
+        this.member = member;
     }
 
     public Customer() {
-        this.customerId = ++totalCustomers;
-        this.name = "Unknown";
-        this.phoneNumber = "Unknown";
-        this.isMember = false;
+        this("Unknown", "Unknown", false);
     }
 
     // =========================
@@ -52,12 +50,12 @@ public class Customer {
         }
     }
 
-    public boolean isMember() {   // fixed method name
-        return isMember;
+    public boolean isMember() {
+        return member;
     }
 
     public void setMember(boolean member) {
-        this.isMember = member;
+        this.member = member;
     }
 
     public static int getTotalCustomers() {
@@ -65,19 +63,30 @@ public class Customer {
     }
 
     // =========================
-    // HELPER METHODS
+    // BUSINESS LOGIC (VERY IMPORTANT 🔥)
     // =========================
 
-    private boolean isBlank(String s) {
-        return s == null || s.trim().isEmpty();
+    // Apply discount if member
+    public double applyDiscount(double price) {
+        if (member) {
+            return price * 0.9; // 10% discount
+        }
+        return price;
+    }
+
+    public String getMembershipType() {
+        return member ? "Member" : "Regular";
     }
 
     public boolean hasValidPhone() {
         return phoneNumber != null && phoneNumber.length() >= 9;
     }
 
-    public String getMembershipType() {
-        return isMember ? "Member" : "Regular";
+    // =========================
+    // HELPER METHOD
+    // =========================
+    private boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
     }
 
     // =========================

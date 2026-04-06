@@ -3,42 +3,52 @@ package other;
 public class BuyTicket {
 
     private int ticketCount;
-    // private int maxTickets;
     private Customer customer;
+
     private static final double NORMAL_PRICE = 12;
     private static final double VIP_PRICE = 20;
-    
 
-    // public BuyTicket(){
-    //    this(50);
-    // }
-    // public BuyTicket(int maxTickets){
-    //      this.maxTickets = maxTickets;
-    //     this.ticketCount = 0;
-    // }  
-
-
-    // public boolean bookTicket(int numberOfTickets) {
-    //     if (ticketCount + numberOfTickets <= maxTickets) {
-    //         ticketCount += numberOfTickets;
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
-
-    public double calculateTotalPrice(double  normalTickets, double  vipTickets) {
-        return (normalTickets * NORMAL_PRICE) + (vipTickets * VIP_PRICE);
+    // =========================
+    // CONSTRUCTOR
+    // =========================
+    public BuyTicket(Customer customer) {
+        this.customer = customer;
+        this.ticketCount = 0;
     }
 
-    
+    // =========================
+    // CORE LOGIC (IMPORTANT 🔥)
+    // =========================
+    public double calculateTotalPrice(int normalTickets, int vipTickets) {
+
+        // Validation
+        if (normalTickets < 0 || vipTickets < 0) {
+            System.out.println("Invalid ticket quantity.");
+            return 0;
+        }
+
+        this.ticketCount = normalTickets + vipTickets;
+
+        double total = (normalTickets * NORMAL_PRICE) + (vipTickets * VIP_PRICE);
+
+        // Apply discount if customer is member
+        if (customer != null) {
+            total = customer.applyDiscount(total);
+        }
+
+        return total;
+    }
+
+    // =========================
+    // GETTERS
+    // =========================
     public int getTicketCount() {
         return ticketCount;
     }
 
-    // public int getMaxTickets() {
-    //     return maxTickets;
-    // }
+    public Customer getCustomer() {
+        return customer;
+    }
 
     public double getNormalPrice() {
         return NORMAL_PRICE;
@@ -48,24 +58,23 @@ public class BuyTicket {
         return VIP_PRICE;
     }
 
-    // public static void main(String[] args) {
+    // =========================
+    // SETTER
+    // =========================
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-    //     BuyTicket buy = new BuyTicket();
+    // =========================
+    // EXTRA METHOD (VERY GOOD 🔥)
+    // =========================
+    public void printSummary(int normalTickets, int vipTickets) {
+        double total = calculateTotalPrice(normalTickets, vipTickets);
 
-    //     int normalTickets = 3;
-    //     int vipTickets = 2;
-
-    //     if (buy.bookTicket(normalTickets + vipTickets)) {
-    //         double totalPrice = buy.calculateTotalPrice(normalTickets, vipTickets);
-    //         System.out.println("Tickets booked successfully!");
-    //         System.out.println("Total Price: $" + totalPrice);
-    //     } else {
-    //         System.out.println("Not enough seats available.");
-    //     }
-    // }
-
-
+        System.out.println("Customer: " + (customer != null ? customer.getName() : "Unknown"));
+        System.out.println("Normal Tickets: " + normalTickets);
+        System.out.println("VIP Tickets: " + vipTickets);
+        System.out.println("Total Tickets: " + ticketCount);
+        System.out.println("Total Price: $" + total);
+    }
 }
-
-
-
